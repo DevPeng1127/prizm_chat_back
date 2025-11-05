@@ -14,6 +14,7 @@ public class ChatController {
 
     @MessageMapping("/chat.send")
     public void sendMessage(ChatMessage message) {
+        System.out.println("📩 Received message for roomId=" + message.getRoomId());
         chatService.sendMessage(message);
     }
 }

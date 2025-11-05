@@ -18,7 +18,6 @@ public class ChatService {
     public void sendMessage(ChatMessage message) {
         message.setCreatedAt(LocalDateTime.now());
         chatMessageRepository.save(message); // DB 저장
-        messagingTemplate.convertAndSend("/exchange/amq.topic/chatroom/" + message.getRoomId(), message);
-        // RabbitMQ 브로드캐스트
+        messagingTemplate.convertAndSend("/topic/chatroom/" + message.getRoomId(), message);        // RabbitMQ 브로드캐스트
     }
 }
