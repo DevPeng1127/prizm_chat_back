@@ -10,9 +10,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // ✅ 내장(Simple) 브로커 사용 — RabbitMQ 통하지 않음
-        //    프론트에서 /topic, /queue prefix로 구독하면 바로 Spring이 브로드캐스트 처리함
-        registry.enableSimpleBroker("/topic", "/queue");
+        // ✅ STOMP 브로커 사용 (RabbitMQ)
+        //    /topic, /queue prefix를 사용하는 메시지를 브로커로 라우팅
+        registry.enableStompBrokerRelay("/exchange","/topic", "/queue")
+                .setRelayHost("localhost") // application.yml에서 설정한 값과 동일하게
+                .setRelayPort(61613)       // RabbitMQ STOMP 기본 포트
+                .setClientLogin("admin")   // application.yml에서 설정한 값
+                .setClientPasscode("1234");
 
         // ✅ 클라이언트가 publish할 때 사용할 prefix
         //    예: stompClient.publish({ destination: "/pub/chat.send", body: ... })
