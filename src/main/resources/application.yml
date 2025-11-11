@@ -1,17 +1,24 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   main:
     allow-bean-definition-overriding: true
   rabbitmq:
     host: 192.168.0.221
-    port: 5672
+    port: 5672 # AMQP Port
+    stomp-port: 61613 # STOMP Port
     username: admin
-    password: 1234
+    # Provide password using environment variable: SPRING_RABBITMQ_PASSWORD
+    password: ${SPRING_RABBITMQ_PASSWORD}
   datasource:
     url: jdbc:postgresql://localhost:5432/prizm_chat
     username: postgres
-    password: 1234
+    # Provide password using environment variable: SPRING_DATASOURCE_PASSWORD
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
+      # Use 'validate' in production to avoid accidental schema changes.
+      # Use 'create-drop' for testing if you need a fresh schema for each run.
       ddl-auto: update
     properties:
       hibernate:
@@ -23,4 +30,13 @@ spring:
       port: 6379
 
 server:
+
   port: 8080
+
+
+
+translation:
+
+  api:
+
+    url: http://localhost:8000/v1/translate

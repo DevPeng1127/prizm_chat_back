@@ -1,37 +1,41 @@
 package run.prizm.chat_translate_demo.service;
 
-import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
 
-// @Service
-@RequiredArgsConstructor
+@Service
 public class TranslationService {
 
-    private final RestTemplate restTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(TranslationService.class);
+    private final WebClient webClient;
 
     @Value("${translation.api.url}")
     private String apiUrl;
 
-    public String translate(String message) {
-        try {
-            Map<String, String> requestBody = new HashMap<>();
-            requestBody.put("message", message);
+    public TranslationService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl(apiUrl).build();
+    }
 
-            Map<String, String> response = restTemplate.postForObject(apiUrl, requestBody, Map.class);
+    public Mono<String> translate(String message) {
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("text", message);
+        // TODO: Make target language configurable
+        requestBody.put("target_lang", "en");
 
-            if (response != null && response.containsKey("translated_message")) {
-                return response.get("translated_message");
-            }
-            return "Error: Translation failed.";
-        } catch (Exception e) {
-            // Log the error
-            e.printStackTrace();
-            return "Error: Could not connect to translation service.";
-        }
+        return webClient.post()
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .map(response -> (String) response.get("result"))
+                .doOnError(error -> logger.error("Translation API call failed", error))
+                .onErrorReturn("Error: Translation failed.");
     }
 }
+
