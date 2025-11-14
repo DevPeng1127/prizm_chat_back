@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class TranslationResponse {
+    private Long messageId;
     private String translatedMessage;
     private String originalMessage;
-    private String roomId;
-    private String sender;
+    private String targetLang;
 }

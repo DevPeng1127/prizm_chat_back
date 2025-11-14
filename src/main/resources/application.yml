@@ -39,4 +39,4 @@ translation:
 
   api:
 
-    url: http://localhost:8000/v1/translate
+    url: http://localhost:8000/api/translate

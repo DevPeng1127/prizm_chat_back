@@ -1,7 +1,17 @@
 package run.prizm.chat_translate_demo.model;
 
-public enum MessageType {
-    ENTER,
-    CHAT,
-    LEAVE
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "message_types")
+@Getter
+@Setter
+public class MessageType {
+
+    @Id
+    private String code;
 }

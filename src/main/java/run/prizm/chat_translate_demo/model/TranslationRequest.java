@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TranslationRequest {
-    private String message;
-    private String roomId;
-    private String sender;
+    private Long messageId;
+    private String targetLang;
 }
